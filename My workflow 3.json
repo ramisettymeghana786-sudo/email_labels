@@ -1,0 +1,214 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -656,
+        80
+      ],
+      "id": "62c2b854-03e6-4a4d-89fb-872c669dc024",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5XjaSVweT45SkSYt",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "hr",
+              "description": "Automatically detects HR-related emails like recruitment, interviews, onboarding, payroll, employee records, leave requests, and job applications, then moves them to the HR label in Gmail. Keywords: HR, interview, recruitment, hiring, resume, candidate, onboarding, payroll, employee, leave, job application, offer letter, attendance, training."
+            },
+            {
+              "category": "sales",
+              "description": "Automatically detects sales-related emails like pricing, quotations, demos, orders, subscriptions, invoices, partnerships, and client inquiries, then moves them to the Sales label in Gmail.  Keywords: sales, pricing, quotation, invoice, payment, order, demo, client, customer, proposal, subscription, purchase, partnership, deal, contract, business inquiry."
+            },
+            {
+              "category": "admin",
+              "description": "Automatically detects administrative emails like reports, approvals, meetings, policies, operations, documentation, and internal communications, then moves them to the Admin label in Gmail. Keywords: admin, approval, report, policy, meeting, operations, document, update, compliance, internal, management, notice, schedule, request."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        48
+      ],
+      "id": "1c00ee2b-30d8-4d89-9f05-8c8ce9591873",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        256
+      ],
+      "id": "6ba046a3-0ecd-4c17-99cc-48e49f97332c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "FVbfznLE9auNSPx4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8715548254918408666"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        -64
+      ],
+      "id": "aa766ad4-a12b-4073-a890-d2e65adc99dd",
+      "name": "Add label to message",
+      "webhookId": "f1201ef5-5ad6-4c08-9492-465d394e402a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5XjaSVweT45SkSYt",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8917713895890534110"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        64
+      ],
+      "id": "95259f0b-0f21-4b69-a5c3-0b041bf1a251",
+      "name": "Add label to message1",
+      "webhookId": "607155a4-4050-4240-ae83-26055919da72",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5XjaSVweT45SkSYt",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_416592750352606853"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -32,
+        224
+      ],
+      "id": "82d8a77d-72ca-4f6e-bd09-570389f4595e",
+      "name": "Add label to message2",
+      "webhookId": "790a06fd-f864-469c-bda6-adbaace5f3b5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5XjaSVweT45SkSYt",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a2715e20-b6ac-41e9-8993-e28f426bf120",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "20642f7d021c0e353f858021d22e6dd0b4cbca193d30c367a2678ee4a8706bfc"
+  },
+  "id": "yBQXco1Hi8fDbsGp",
+  "tags": []
+}
